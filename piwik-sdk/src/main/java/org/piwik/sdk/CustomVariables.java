@@ -1,22 +1,22 @@
 /*
- * Android SDK for Piwik
+ * Android SDK for Eoc
  *
- * @link https://github.com/piwik/piwik-android-sdk
- * @license https://github.com/piwik/piwik-sdk-android/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/eoc/eoc-android-sdk
+ * @license https://github.com/eoc/eoc-sdk-android/blob/master/LICENSE BSD-3 Clause
  */
 
-package org.piwik.sdk;
+package org.eoc.sdk;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.piwik.sdk.tools.Logy;
+import org.eoc.sdk.tools.Logy;
 
 import java.util.Arrays;
 import java.util.HashMap;
 
 
 public class CustomVariables extends HashMap<String, JSONArray> {
-    private static final String LOGGER_TAG = Piwik.LOGGER_PREFIX + "CustomVariables";
+    private static final String LOGGER_TAG = Eoc.LOGGER_PREFIX + "CustomVariables";
     /**
      * You can track up to 5 custom variables for each user to your app,
      * and up to 5 custom variables for each screen view.
@@ -24,7 +24,7 @@ public class CustomVariables extends HashMap<String, JSONArray> {
      * Desired json output:
      * {
      * "1":["OS","iphone 5.0"],
-     * "2":["Piwik Mobile Version","1.6.2"],
+     * "2":["Eoc Mobile Version","1.6.2"],
      * "3":["Locale","en::en"],
      * "4":["Num Accounts","2"],
      * "5":["Level","over9k"]
