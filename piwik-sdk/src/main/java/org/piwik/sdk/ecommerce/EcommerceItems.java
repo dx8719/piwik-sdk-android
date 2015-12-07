@@ -1,16 +1,16 @@
 /*
- * Android SDK for Piwik
+ * Android SDK for Eoc
  *
- * @link https://github.com/piwik/piwik-android-sdk
- * @license https://github.com/piwik/piwik-sdk-android/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/eoc/eoc-android-sdk
+ * @license https://github.com/eoc/eoc-sdk-android/blob/master/LICENSE BSD-3 Clause
  */
 
-package org.piwik.sdk.ecommerce;
+package org.eoc.sdk.ecommerce;
 
 import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
-import org.piwik.sdk.tools.CurrencyFormatter;
+import org.eoc.sdk.tools.CurrencyFormatter;
 
 import java.util.HashMap;
 import java.util.Map;
