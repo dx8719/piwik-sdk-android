@@ -1,68 +1,103 @@
 /*
- * Android SDK for Piwik
+ * Android SDK for Eoc
  *
- * @link https://github.com/piwik/piwik-android-sdk
- * @license https://github.com/piwik/piwik-sdk-android/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/eoc/eoc-android-sdk
+ * @license https://github.com/eoc/eoc-sdk-android/blob/master/LICENSE BSD-3 Clause
  */
+package org.eoc.sdk.tools;
 
-package org.piwik.sdk.tools;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
 
-import android.util.Log;
+import org.eoc.sdk.Eoc;
 
-import org.piwik.sdk.BuildConfig;
+import java.lang.reflect.Method;
+import java.util.Locale;
 
 /**
- * Wrapper class for {@link android.util.Log} that allows to fine tune what gets logged.
+ * Helper class to gain information about the device we are running on
  */
-public class Logy {
-    public static final int SILENT = -2;
-    public static final int QUIET = -1;
-    public static final int NORMAL = 0;
-    public static final int DEBUG = 1;
-    public static final int VERBOSE = 2;
+public class DeviceHelper {
+    private static final String LOGGER_TAG = Eoc.LOGGER_PREFIX + "DeviceHelper";
 
-    public static int sLoglevel = BuildConfig.DEBUG ? VERBOSE : QUIET;
-
-    public static void v(String c, String s) {
-        if (sLoglevel >= VERBOSE) {
-            Log.v(c, s);
-        }
+    /**
+     * Returns user language
+     *
+     * @return language
+     */
+    public static String getUserLanguage() {
+        return Locale.getDefault().getLanguage();
     }
 
-    public static void d(String c, String s) {
-        if (sLoglevel >= DEBUG) {
-            Log.d(c, s);
-        }
+    /**
+     * Returns user country
+     *
+     * @return country
+     */
+    public static String getUserCountry() {
+        return Locale.getDefault().getCountry();
     }
 
-    public static void i(String c, String s) {
-        if (sLoglevel >= NORMAL) {
-            Log.i(c, s);
-        }
+    /**
+     * Returns android system user agent
+     *
+     * @return well formatted user agent
+     */
+    public static String getUserAgent() {
+        return System.getProperty("http.agent");
     }
 
-    public static void w(String c, String s) {
-        if (sLoglevel > QUIET) {
-            Log.w(c, s);
-        }
-    }
+    /**
+     * Tries to get the most accurate device resolution.
+     * On devices below API17 resolution might not account for statusbar/softkeys.
+     *
+     * @param context your application context
+     * @return [width, height]
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static int[] getResolution(Context context) {
+        int width = -1, height = -1;
 
-    public static void w(String c, String s, Throwable tr) {
-        if (sLoglevel > QUIET) {
-            Log.w(c, s, tr);
+        Display display;
+        try {
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            display = wm.getDefaultDisplay();
+        } catch (NullPointerException e) {
+            Logy.e(LOGGER_TAG, "Window service was not available from this context");
+            return null;
         }
-    }
 
-    public static void e(String c, String s) {
-        if (sLoglevel != SILENT) {
-            Log.e(c, s);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            // Recommended way to get the resolution but only available since API17
+            DisplayMetrics dm = new DisplayMetrics();
+            display.getRealMetrics(dm);
+            width = dm.widthPixels;
+            height = dm.heightPixels;
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            // Reflection bad, still this is the best way to get an accurate screen size on API14-16.
+            try {
+                Method getRawWidth = Display.class.getMethod("getRawWidth");
+                Method getRawHeight = Display.class.getMethod("getRawHeight");
+                width = (int) getRawWidth.invoke(display);
+                height = (int) getRawHeight.invoke(display);
+            } catch (Exception e) {
+                Logy.w(LOGGER_TAG, "Reflection of getRawWidth/getRawHeight failed on API14-16 unexpectedly.");
+            }
         }
-    }
 
-    public static void e(String c, String s, Throwable tr) {
-        if (sLoglevel != SILENT) {
-            Log.e(c, s, tr);
+        if (width == -1 || height == -1) {
+            // This is not accurate on all 4.2+ devices, usually the height is wrong due to statusbar/softkeys
+            // Better than nothing though.
+            DisplayMetrics dm = new DisplayMetrics();
+            display.getMetrics(dm);
+            width = dm.widthPixels;
+            height = dm.heightPixels;
         }
-    }
 
+        return new int[]{width, height};
+    }
 }
