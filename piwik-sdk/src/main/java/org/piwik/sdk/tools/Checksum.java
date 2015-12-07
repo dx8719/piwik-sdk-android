@@ -1,11 +1,11 @@
 /*
- * Android SDK for Piwik
+ * Android SDK for eoc
  *
- * @link https://github.com/piwik/piwik-android-sdk
- * @license https://github.com/piwik/piwik-sdk-android/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/eoc/eoc-android-sdk
+ * @license https://github.com/eoc/eoc-sdk-android/blob/master/LICENSE BSD-3 Clause
  */
 
-package org.piwik.sdk.tools;
+package org.eoc.sdk.tools;
 
 import java.io.File;
 import java.io.FileInputStream;
