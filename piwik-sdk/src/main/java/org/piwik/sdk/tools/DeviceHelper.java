@@ -1,10 +1,10 @@
 /*
- * Android SDK for Piwik
+ * Android SDK for Eoc
  *
- * @link https://github.com/piwik/piwik-android-sdk
- * @license https://github.com/piwik/piwik-sdk-android/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/eoc/eoc-android-sdk
+ * @license https://github.com/eoc/eoc-sdk-android/blob/master/LICENSE BSD-3 Clause
  */
-package org.piwik.sdk.tools;
+package org.eoc.sdk.tools;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
-import org.piwik.sdk.Piwik;
+import org.eoc.sdk.Eoc;
 
 import java.lang.reflect.Method;
 import java.util.Locale;
@@ -22,7 +22,7 @@ import java.util.Locale;
  * Helper class to gain information about the device we are running on
  */
 public class DeviceHelper {
-    private static final String LOGGER_TAG = Piwik.LOGGER_PREFIX + "DeviceHelper";
+    private static final String LOGGER_TAG = Eoc.LOGGER_PREFIX + "DeviceHelper";
 
     /**
      * Returns user language
