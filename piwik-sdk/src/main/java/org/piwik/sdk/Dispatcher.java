@@ -1,11 +1,11 @@
 /*
- * Android SDK for Piwik
+ * Android SDK for Eoc
  *
- * @link https://github.com/piwik/piwik-android-sdk
- * @license https://github.com/piwik/piwik-sdk-android/blob/master/LICENSE BSD-3 Clause
+ * @link https://github.com/eoc/eoc-android-sdk
+ * @license https://github.com/eoc/eoc-sdk-android/blob/master/LICENSE BSD-3 Clause
  */
 
-package org.piwik.sdk;
+package org.eoc.sdk;
 
 import android.os.Process;
 
@@ -21,7 +21,7 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
-import org.piwik.sdk.tools.Logy;
+import org.eoc.sdk.tools.Logy;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -38,7 +38,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Sends json POST request to tracking url http://piwik.example.com/piwik.php with body
+ * Sends json POST request to tracking url http://eoc.example.com/eoc.php with body
  * <p/>
  * {
  * "requests": [
@@ -50,11 +50,11 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("deprecation")
 public class Dispatcher {
-    private static final String LOGGER_TAG = Piwik.LOGGER_PREFIX + "Dispatcher";
+    private static final String LOGGER_TAG = Eoc.LOGGER_PREFIX + "Dispatcher";
     private final BlockingQueue<String> mDispatchQueue = new LinkedBlockingQueue<>();
     private final Object mThreadControl = new Object();
     private final Semaphore mSleepToken = new Semaphore(0);
-    private final Piwik mPiwik;
+    private final Eoc mEoc;
     private final URL mApiUrl;
     private final String mAuthToken;
 
@@ -65,16 +65,16 @@ public class Dispatcher {
 
     private volatile long mDispatchInterval = 120 * 1000; // 120s
 
-    public Dispatcher(Piwik piwik, URL apiUrl, String authToken) {
-        mPiwik = piwik;
+    public Dispatcher(Eoc eoc, URL apiUrl, String authToken) {
+        mEoc = eoc;
         mApiUrl = apiUrl;
         mAuthToken = authToken;
     }
 
     /**
-     * Connection timeout in milliseconds
+     * Connection timeout in miliseconds
      *
-     * @return timeout in milliseconds
+     * @return
      */
     public int getTimeOut() {
         return mTimeOut;
@@ -107,14 +107,12 @@ public class Dispatcher {
 
     /**
      * Starts the dispatcher for one cycle if it is currently not working.
-     * If the dispatcher is working it will skip the dispatch interval once.
+     * If the dispatcher is working it will skip the dispatch intervall once.
      */
-    public boolean forceDispatch() {
+    public void forceDispatch() {
         if (!launch()) {
             mSleepToken.release();
-            return false;
         }
-        return true;
     }
 
     public void submit(String query) {
@@ -165,14 +163,14 @@ public class Dispatcher {
         }
     };
 
-    protected boolean doGet(String trackingEndPointUrl) {
+    private boolean doGet(String trackingEndPointUrl) {
         if (trackingEndPointUrl == null)
             return false;
         HttpGet get = new HttpGet(trackingEndPointUrl);
         return doRequest(get);
     }
 
-    protected boolean doPost(URL url, JSONObject json) {
+    private boolean doPost(URL url, JSONObject json) {
         if (url == null || json == null)
             return false;
 
@@ -197,7 +195,7 @@ public class Dispatcher {
         HttpConnectionParams.setConnectionTimeout(client.getParams(), mTimeOut);
         HttpResponse response;
 
-        if (mPiwik.isDryRun()) {
+        if (mEoc.isDryRun()) {
             Logy.d(LOGGER_TAG, "DryRun, stored HttpRequest, now " + mDryRunOutput.size());
             mDryRunOutput.add(requestBase);
         } else {
